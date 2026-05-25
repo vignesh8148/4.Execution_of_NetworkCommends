@@ -26,26 +26,34 @@ This commands includes
 • Other IP Commands e.g. show ip route etc.
 <BR>
 ## program
-CLIENT.PY:
+CLIENT.PY
 ```
 import socket
-
-c = socket.socket()
-
-c.connect(('localhost', 8000))
-
+from pythonping import ping
+s = socket.socket()
+s.bind(('localhost', 8000))
+s.listen(1)
+print("Server waiting for connection...")
+c, addr = s.accept()
+print("Connected with", addr)
 while True:
-    hostname = input("Enter hostname: ")
+    try:
+        hostname = c.recv(1024).decode()
 
-    c.send(hostname.encode())
+        if not hostname:
+            break
 
-    data = c.recv(4096).decode()
+        result = ping(hostname, verbose=False)
+        c.send(str(result).encode())
 
-    print("Ping Result:")
-    print(data)
+    except Exception as e:
+        print("Connection closed:", e)
+        break
 
 c.close()
-```
+s.close()
+ ```
+
 SERVER.PY
 ```
 import socket

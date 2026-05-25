@@ -25,36 +25,11 @@ This commands includes
 <BR>
 • Other IP Commands e.g. show ip route etc.
 <BR>
-## program
-CLIENT.PY
-```
-import socket
-from pythonping import ping
-s = socket.socket()
-s.bind(('localhost', 8000))
-s.listen(1)
-print("Server waiting for connection...")
-c, addr = s.accept()
-print("Connected with", addr)
-while True:
-    try:
-        hostname = c.recv(1024).decode()
+## PROGRAM
 
-        if not hostname:
-            break
+SERVER.PY:
 
-        result = ping(hostname, verbose=False)
-        c.send(str(result).encode())
 
-    except Exception as e:
-        print("Connection closed:", e)
-        break
-
-c.close()
-s.close()
- ```
-
-SERVER.PY
 ```
 import socket
 from pythonping import ping
@@ -85,9 +60,34 @@ while True:
 
 c.close()
 s.close()
+
 ```
+Client.py
+```
+
+import socket
+
+c = socket.socket()
+
+c.connect(('localhost', 8000))
+
+while True:
+    hostname = input("Enter hostname: ")
+
+    c.send(hostname.encode())
+
+    data = c.recv(4096).decode()
+
+    print("Ping Result:")
+    print(data)
+
+c.close()
+```
+
 
 ## Output
+<img width="1243" height="367" alt="{2FDC7C98-09B2-422B-B8FA-BBAE681122A5}" src="https://github.com/user-attachments/assets/65778db4-e739-4779-b4ec-2f3fbb72eb1d" />
+
 
 ## Result
 Thus Execution of Network commands Performed 
